@@ -1,0 +1,43 @@
+doctrine:
+    dbal:
+        driver: pdo_pgsql
+        server_version: '15.4'
+        host: '%env(resolve:POSTGRES_HOST)%'
+        port: '%env(resolve:POSTGRES_PORT)%'
+        user: '%env(resolve:POSTGRES_USER)%'
+        password: '%env(resolve:POSTGRES_PASSWORD)%'
+        dbname: '%env(resolve:POSTGRES_DB)%'
+        profiling_collect_backtrace: '%kernel.debug%'
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Model'
+                prefix: 'App\Model'
+                alias: App
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

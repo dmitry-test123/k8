@@ -1,0 +1,23 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        # failure_transport: failed
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+
+            NotifyExpiringSubscription:
+                dsn: 'amqp://%env(RABBITMQ_USER)%:%env(RABBITMQ_PASS)%@%env(RABBITMQ_HOST)%:%env(RABBITMQ_PORT)%/%2f/NotifyExpiringSubscription'
+                retry_strategy:
+                    max_retries: 10
+                    delay: 60000
+                    multiplier: 2
+
+            CheckEmail:
+                dsn: 'amqp://%env(RABBITMQ_USER)%:%env(RABBITMQ_PASS)%@%env(RABBITMQ_HOST)%:%env(RABBITMQ_PORT)%/%2f/CheckEmail'
+                retry_strategy:
+                    max_retries: 1
+
+        routing:
+            'App\Message\NotifyExpiringSubscription': NotifyExpiringSubscription
+            'App\Message\CheckEmail': CheckEmail
