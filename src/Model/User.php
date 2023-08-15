@@ -59,6 +59,10 @@ class User
 
     public function setValidTs(int $validTs): void
     {
+        // при оформлении новой подписки - обнуляем обработанное уведомление
+        if ($validTs > 0) {
+            $this->notification = null;
+        }
         $this->validTs = $validTs;
     }
 
